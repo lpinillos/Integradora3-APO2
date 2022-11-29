@@ -5,13 +5,13 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.integradora3apo.control.GameController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500" prefWidth="1000" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.integradora3apo.control.GameController">
     <children>
-      <ImageView fitHeight="400.0" fitWidth="607.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="1000" fitWidth="700" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@GameMap.jpeg" />
          </image>
       </ImageView>
-        <Canvas fx:id="canvas" height="400.0" layoutY="-1.0" width="600.0" />
+        <Canvas fx:id="canvas" height="1000" layoutY="-1.0" width="1000" />
     </children>
 </AnchorPane>
