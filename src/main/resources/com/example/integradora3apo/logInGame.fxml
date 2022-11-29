@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="397.0" prefWidth="707.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.integradora3apo.control.HelloController">
+   <children>
+      <ImageView fitHeight="401.0" fitWidth="706.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@TankBattle.png" />
+         </image>
+      </ImageView>
+      <TextField fx:id="textUsuario2" layoutX="412.0" layoutY="242.0" prefHeight="28.0" prefWidth="203.0" promptText="Usuario2" />
+      <TextField fx:id="textUsuario1" layoutX="93.0" layoutY="242.0" prefHeight="28.0" prefWidth="203.0" promptText="Usuario1" />
+      <Button fx:id="startGame" layoutX="296.0" layoutY="318.0" mnemonicParsing="false" onAction="#startGame" style="-fx-background-color: #00b347;" text="INICIAR PARTIDA">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+   </children>
+</Pane>
