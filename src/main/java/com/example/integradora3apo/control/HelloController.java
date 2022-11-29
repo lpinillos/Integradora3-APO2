@@ -28,9 +28,21 @@ public class HelloController implements Initializable {
 
     @FXML
     void startGame(ActionEvent event) {
+
+        if(textUsuario1.getText().equals("") || textUsuario2.getText().equals("")){
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setContentText("Please fill up the username spaces");
+            alert.showAndWait();
+
+        }else{
+
             HelloApplication.showWindow("canvasView.fxml");
             Stage currentStage = (Stage) startGame.getScene().getWindow();
             currentStage.hide();
+
+        }
 
     }
 

@@ -1,12 +1,11 @@
 package com.example.integradora3apo.model;
 
 import com.example.integradora3apo.HelloApplication;
-import com.example.integradora3apo.model.Vector;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-public class Avatar {
+public class AvatarTwo {
 
     private Canvas canvas;
     private GraphicsContext gc;
@@ -14,38 +13,36 @@ public class Avatar {
     public Vector pos;
     public Vector direction;
 
-    public Avatar(Canvas canvas) {
+    public AvatarTwo(Canvas canvas){
         this.canvas = canvas;
         gc = canvas.getGraphicsContext2D();
-        String uri = "file:" + HelloApplication.class.getResource("tank.png").getPath();
+        String uri = "file:"+ HelloApplication.class.getResource("tank.png").getPath();
         tank = new Image(uri);
-        pos = new Vector(100, 100);
-        direction = new Vector(2, 2);
+        pos = new Vector(100,100);
+        direction = new Vector(2,2);
     }
 
-    public void draw() {
+    public void draw(){
         gc.save();
         gc.translate(pos.x, pos.y);
-        gc.rotate(90 + direction.getAngle());
-        gc.drawImage(tank, -25, -25, 50, 50);
+        gc.rotate(90+direction.getAngle());
+        gc.drawImage(tank, -25,-25, 50,50);
         gc.restore();
     }
-
     public void setPosition(double x, double y) {
         pos.x = (int) x - 25;
         pos.y = (int) y - 25;
     }
 
-    public void changeAngle(double a) {
+    public void changeAngle(double a){
         double amp = direction.getAmplitude();
         double angle = direction.getAngle();
         angle += a;
-        direction.x = amp * Math.cos(Math.toRadians(angle));
-        direction.y = amp * Math.sin(Math.toRadians(angle));
+        direction.x = amp*Math.cos(Math.toRadians(angle));
+        direction.y = amp*Math.sin(Math.toRadians(angle));
     }
 
-    public void moveForward() {
-
+    public void moveForward(){
         if (pos.x >= canvas.getWidth() - 25) {
             pos.x = canvas.getWidth() - 25;
         }
@@ -67,7 +64,6 @@ public class Avatar {
     }
 
     public void moveBackward() {
-
         if (pos.x >= canvas.getWidth() - 25) {
             pos.x = canvas.getWidth() - 25;
         }
@@ -87,4 +83,5 @@ public class Avatar {
         pos.x -= direction.x;
         pos.y -= direction.y;
     }
+
 }
