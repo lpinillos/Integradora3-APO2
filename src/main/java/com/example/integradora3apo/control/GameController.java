@@ -181,7 +181,10 @@ public class GameController implements Initializable {
                         Platform.runLater(() -> {
 
                             gc.drawImage(fondo, 0, 0, canvas.getWidth(), canvas.getHeight());
-                            avatars.get(0).draw();
+                            if(avatars.size() != 0){
+                                avatars.get(0).draw();
+                            }
+
                             avatar2.draw();
 
 
@@ -219,7 +222,7 @@ public class GameController implements Initializable {
                             }
 
                             //Colisiones
-                            detectCollission();
+                            //detectCollission();
                             detectDamage();
                             doKeyboardActions();
                             doKeyboardActions2();
@@ -236,21 +239,20 @@ public class GameController implements Initializable {
     }
 
     private void detectDamage() {
-        for (int i = 0; i < bullets.size(); i++) {
+        for (int i = 0; i < avatars.size(); i++) {
+            for (int j = 0; j < bullets.size(); j++) {
+                Bullet b = bullets.get(j);
+                Avatar a = avatars.get(i);
 
-            Bullet b = bullets.get(i);
-            Enemy e = enemies.get(i);
+                double c1 = b.pos.x - a.pos.x;
+                double c2 = b.pos.y - a.pos.y;
+                double distance = Math.sqrt(Math.pow(c1, 2) + Math.pow(c2, 2));
+                if (distance < 12.5) {
+                    bullets.remove(j);
+                    return;
+                }
 
-            double c1 = b.pos.x - avatar.pos.x;
-            double c2 = b.pos.y - avatar.pos.y;
-
-            double distance = Math.sqrt(Math.pow(c1, 2) + Math.pow(c2, 2));
-
-            if (distance < 12.5) {
-                bullets.remove(i);
-                return;
             }
-
         }
     }
 
@@ -278,7 +280,7 @@ public class GameController implements Initializable {
         if (Wpressed) {
             for (int i = 0; i < walls.size(); i++) {
 
-                if (walls.get(i).rectangle.intersects(avatar.pos.x + avatar.direction.x - 25, avatar.pos.y + avatar.direction.y - 25, 50, 50)) {
+                if (walls.get(i).rectangle.intersects(avatars.get(0).pos.x + avatars.get(0).direction.x - 25, avatars.get(0).pos.y + avatars.get(0).direction.y - 25, 50, 50)) {
 
                     stopFlag = true;
 
@@ -295,18 +297,18 @@ public class GameController implements Initializable {
         }
         if (Spressed) {
             for (int i = 0; i < walls.size(); i++) {
-                if (walls.get(i).rectangle.intersects(avatar.pos.x + avatar.direction.x - 25, avatar.pos.y + avatar.direction.y - 25, 50, 50)) {
+                if (walls.get(i).rectangle.intersects(avatars.get(0).pos.x + avatars.get(0).direction.x - 25, avatars.get(0).pos.y + avatars.get(0).direction.y - 25, 50, 50)) {
                     stopFlag = true;
                 }
 
             }
             if (!stopFlag) {
-                avatar.moveBackward();
+                avatars.get(0).moveBackward();
             }
 
         }
         if (Dpressed) {
-            avatar.changeAngle(6);
+            avatars.get(0).changeAngle(6);
         }
     }
 
@@ -392,8 +394,8 @@ public class GameController implements Initializable {
         }
         if (keyEvent.getCode() == KeyCode.SPACE) {
             Bullet bullet = new Bullet(canvas,
-                    new Vector(avatar.pos.x, avatar.pos.y),
-                    new Vector(2 * avatar.direction.x, 2 * avatar.direction.y));
+                    new Vector(avatars.get(0).pos.x, avatars.get(0).pos.y),
+                    new Vector(2 * avatars.get(0).direction.x, 2 * avatars.get(0).direction.y));
             bullets.add(bullet);
         }
 
