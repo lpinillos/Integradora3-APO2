@@ -155,10 +155,10 @@ public class GameController implements Initializable {
         fondo = new Image(uri);
         enemies = new ArrayList<>();
         avatars = new ArrayList<>();
-
-        avatars.add(new Avatar(canvas));
-
         avatarTwos = new ArrayList<>();
+        avatars.add(new Avatar(canvas));
+        avatarTwos.add(new AvatarTwo(canvas));
+
         bullets = new ArrayList<>();
 
         //enemies.add(new Enemy(canvas, 300, 100));
@@ -166,10 +166,6 @@ public class GameController implements Initializable {
 
         canvas.setOnKeyPressed(this::onKeyPressed);
         canvas.setOnKeyReleased(this::onKeyReleased);
-
-
-        avatar = new Avatar(canvas);
-        avatar2 = new AvatarTwo(canvas);
 
         draw();
     }
@@ -185,7 +181,9 @@ public class GameController implements Initializable {
                                 avatars.get(0).draw();
                             }
 
-                            avatar2.draw();
+                            if(avatarTwos.size() != 0){
+                                avatarTwos.get(0).draw();
+                            }
 
 
                             for (int i = 0; i < walls.size(); i++) {
@@ -317,33 +315,33 @@ public class GameController implements Initializable {
         if (UPpressed) {
             for (int i = 0; i < walls.size(); i++) {
 
-                if (walls.get(i).rectangle.intersects(avatar2.pos.x + avatar2.direction.x - 25, avatar2.pos.y + avatar2.direction.y - 25, 50, 50)) {
+                if (walls.get(i).rectangle.intersects(avatarTwos.get(0).pos.x + avatarTwos.get(0).direction.x - 25, avatarTwos.get(0).pos.y + avatarTwos.get(0).direction.y - 25, 50, 50)) {
                     stopFlag2 = true;
                 }
 
             }
             if (!stopFlag2) {
-                avatar2.moveForward();
+                avatarTwos.get(0).moveForward();
             }
 
         }
         if (LEFTpressed) {
-            avatar2.changeAngle(-6);
+            avatarTwos.get(0).changeAngle(-6);
         }
         if (DOWNpressed) {
             for (int i = 0; i < walls.size(); i++) {
-                if (walls.get(i).rectangle.intersects(avatar2.pos.x + avatar2.direction.x - 25, avatar2.pos.y + avatar2.direction.y - 25, 50, 50)) {
+                if (walls.get(i).rectangle.intersects(avatarTwos.get(0).pos.x + avatarTwos.get(0).direction.x - 25, avatarTwos.get(0).pos.y + avatarTwos.get(0).direction.y - 25, 50, 50)) {
                     stopFlag2 = true;
                 }
 
             }
             if (!stopFlag2) {
-                avatar2.moveBackward();
+                avatarTwos.get(0).moveBackward();
             }
 
         }
         if (RIGHTpressed) {
-            avatar2.changeAngle(6);
+            avatarTwos.get(0).changeAngle(6);
         }
     }
 
@@ -415,8 +413,8 @@ public class GameController implements Initializable {
         }
         if (keyEvent.getCode() == KeyCode.CONTROL) {
             Bullet bullet = new Bullet(canvas,
-                    new Vector(avatar2.pos.x, avatar2.pos.y),
-                    new Vector(2 * avatar2.direction.x, 2 * avatar2.direction.y));
+                    new Vector(avatarTwos.get(0).pos.x, avatarTwos.get(0).pos.y),
+                    new Vector(2 * avatarTwos.get(0).direction.x, 2 * avatarTwos.get(0).direction.y));
             bullets.add(bullet);
         }
     }
