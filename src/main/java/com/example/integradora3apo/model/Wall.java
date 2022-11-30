@@ -29,5 +29,6 @@ public class Wall {
         gc.fillRect(x,y,50,50);
         gc.drawImage(wall,x,y,50,50);
         rectangle = new Rectangle(x,y,50,50);
+
     }
 }

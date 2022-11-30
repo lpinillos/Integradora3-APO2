@@ -14,6 +14,11 @@ public class Avatar {
     private Image tank;
     public Vector pos;
     public Vector direction;
+    public Rectangle rectangle;
+
+    public int ammo = 5;
+
+    public int live = 5;
 
     public Avatar(Canvas canvas) {
         this.canvas = canvas;
@@ -29,7 +34,9 @@ public class Avatar {
         gc.translate(pos.x, pos.y);
         gc.rotate(90 + direction.getAngle());
         gc.drawImage(tank, -25, -25, 50, 50);
+        rectangle = new Rectangle(pos.x-25,pos.y-25,40,40);
         gc.restore();
+
     }
 
     public void setPosition(double x, double y) {

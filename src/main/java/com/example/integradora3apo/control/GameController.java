@@ -7,7 +7,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -30,6 +32,23 @@ public class GameController implements Initializable {
     private GraphicsContext gc;
     private boolean isRunning = true;
 
+    private boolean player1Dead = false;
+    @FXML
+    private ImageView liveImage;
+
+    @FXML
+    private ImageView bulletImage;
+
+    @FXML
+    private ImageView bulletImage2;
+
+    @FXML
+    private Label labelName1;
+
+    @FXML
+    private Label labelName2;
+    @FXML
+    private ImageView liveImage2;
 
     //Elementos gráficos
     private Avatar avatar;
@@ -40,7 +59,8 @@ public class GameController implements Initializable {
 
     private ArrayList<Avatar> avatars;
     private ArrayList<AvatarTwo> avatarTwos;
-    private ArrayList<Bullet> bullets;
+    private ArrayList<Bullet> bullets1;
+    private ArrayList<Bullet> bullets2;
     private ArrayList<Wall> walls;
 
 
@@ -82,8 +102,14 @@ public class GameController implements Initializable {
         }
 
         //Pared vertical fondo abajo
-        for (int i = 1000; i <= canvas.getHeight(); i += 50) {
-            Wall wall1 = new Wall(550, i, canvas);
+        for (int i = 550; i <= canvas.getHeight(); i += 50) {
+            Wall wall1 = new Wall(750, i, canvas);
+            walls.add(wall1);
+        }
+
+        //Pared vertical primera abajo
+        for (int i = 550; i <= canvas.getHeight(); i += 50) {
+            Wall wall1 = new Wall(150, i, canvas);
             walls.add(wall1);
         }
 
@@ -106,7 +132,7 @@ public class GameController implements Initializable {
         }
 
         //Pared vertical medio abajo
-        for (int i = 800; i <= 850; i += 50) {
+        for (int i = 450; i <= 450; i += 50) {
             Wall wall1 = new Wall(450, i, canvas);
             walls.add(wall1);
         }
@@ -150,24 +176,31 @@ public class GameController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         gc = canvas.getGraphicsContext2D();
         canvas.setFocusTraversable(true);
+        System.out.println(AvatarData.getInstance().getNamesPlayer1());
         generateMap();
         String uri = "file:" + HelloApplication.class.getResource("topDownArenaView.png").getPath();
+
+        labelName1.setText(AvatarData.getInstance().getNamesPlayer1());
+        labelName2.setText(AvatarData.getInstance().getNamesPlayer2());
+
         fondo = new Image(uri);
         enemies = new ArrayList<>();
         avatars = new ArrayList<>();
-        avatarTwos = new ArrayList<>();
-        avatars.add(new Avatar(canvas));
-        avatarTwos.add(new AvatarTwo(canvas));
 
-        bullets = new ArrayList<>();
+        avatars.add(new Avatar(canvas));
+
+        avatarTwos = new ArrayList<>();
+        avatarTwos.add(new AvatarTwo(canvas));
+        bullets1 = new ArrayList<>();
+        bullets2 = new ArrayList<>();
 
         //enemies.add(new Enemy(canvas, 300, 100));
         //enemies.add(new Enemy(canvas, 300, 300));
 
         canvas.setOnKeyPressed(this::onKeyPressed);
         canvas.setOnKeyReleased(this::onKeyReleased);
-
         draw();
+
     }
 
     public void draw() {
@@ -177,12 +210,24 @@ public class GameController implements Initializable {
                         Platform.runLater(() -> {
 
                             gc.drawImage(fondo, 0, 0, canvas.getWidth(), canvas.getHeight());
-                            if(avatars.size() != 0){
+
+                            if (avatars.size() != 0) {
+
                                 avatars.get(0).draw();
+                                showLifePlayer1();
+                            } else {
+                                String uri = "file:" + HelloApplication.class.getResource("dead.png").getPath();
+                                Image live = new Image(uri);
+                                liveImage.setImage(live);
                             }
 
-                            if(avatarTwos.size() != 0){
+                            if (avatarTwos.size() != 0) {
                                 avatarTwos.get(0).draw();
+                                showLifePlayer2();
+                            } else {
+                                String uri = "file:" + HelloApplication.class.getResource("dead.png").getPath();
+                                Image live = new Image(uri);
+                                liveImage2.setImage(live);
                             }
 
 
@@ -200,20 +245,41 @@ public class GameController implements Initializable {
 
 
                             //Balas disparos
-                            for (int i = 0; i < bullets.size(); i++) {
-                                bullets.get(i).draw();
-                                if (bullets.get(i).pos.x > canvas.getWidth() + 20 ||
-                                        bullets.get(i).pos.y > canvas.getHeight() + 20 ||
-                                        bullets.get(i).pos.y < -20 ||
-                                        bullets.get(i).pos.x < -20) {
-                                    bullets.remove(i);
+                            for (int i = 0; i < bullets1.size(); i++) {
+                                bullets1.get(i).draw();
+                                if (bullets1.get(i).pos.x > canvas.getWidth() + 20 ||
+                                        bullets1.get(i).pos.y > canvas.getHeight() + 20 ||
+                                        bullets1.get(i).pos.y < -20 ||
+                                        bullets1.get(i).pos.x < -20) {
+                                    bullets1.remove(i);
                                 }
 
                             }
-                            for (int i = 0; i < bullets.size(); i++) {
+
+                            for (int i = 0; i < bullets2.size(); i++) {
+                                bullets2.get(i).draw();
+                                if (bullets2.get(i).pos.x > canvas.getWidth() + 20 ||
+                                        bullets2.get(i).pos.y > canvas.getHeight() + 20 ||
+                                        bullets2.get(i).pos.y < -20 ||
+                                        bullets2.get(i).pos.x < -20) {
+                                    bullets2.remove(i);
+                                }
+
+                            }
+
+
+                            for (int i = 0; i < bullets1.size(); i++) {
                                 for (int j = 0; j < walls.size(); j++) {
-                                    if (bullets.get(i).circle.intersects(walls.get(j).rectangle.getBoundsInParent())) {
-                                        bullets.remove(i);
+                                    if (bullets1.get(i).circle.intersects(walls.get(j).rectangle.getBoundsInParent())) {
+                                        bullets1.remove(i);
+                                        walls.get(j).damage--;
+                                    }
+                                }
+                            }
+                            for (int i = 0; i < bullets2.size(); i++) {
+                                for (int j = 0; j < walls.size(); j++) {
+                                    if (bullets2.get(i).circle.intersects(walls.get(j).rectangle.getBoundsInParent())) {
+                                        bullets2.remove(i);
                                         walls.get(j).damage--;
                                     }
                                 }
@@ -221,7 +287,10 @@ public class GameController implements Initializable {
 
                             //Colisiones
                             //detectCollission();
+
                             detectDamage();
+                            showAmmoPlayer1();
+                            showAmmoPlayer2();
                             doKeyboardActions();
                             doKeyboardActions2();
                         });
@@ -237,40 +306,33 @@ public class GameController implements Initializable {
     }
 
     private void detectDamage() {
-        for (int i = 0; i < avatars.size(); i++) {
-            for (int j = 0; j < bullets.size(); j++) {
-                Bullet b = bullets.get(j);
-                Avatar a = avatars.get(i);
+        if (avatarTwos.size() != 0) {
 
-                double c1 = b.pos.x - a.pos.x;
-                double c2 = b.pos.y - a.pos.y;
-                double distance = Math.sqrt(Math.pow(c1, 2) + Math.pow(c2, 2));
-                if (distance < 12.5) {
-                    bullets.remove(j);
-                    return;
+            for (int i = 0; i < bullets1.size(); i++) {
+                if (bullets1.get(i).circle.intersects(avatarTwos.get(0).rectangle.getBoundsInParent())) {
+                    avatarTwos.get(0).live--;
+                    if (avatarTwos.get(0).live == 0) {
+                        avatarTwos.remove(0);
+                    }
+                    bullets1.remove(i);
                 }
-
             }
         }
-    }
 
-    private void detectCollission() {
-        for (int i = 0; i < enemies.size(); i++) {
-            for (int j = 0; j < bullets.size(); j++) {
-                Bullet b = bullets.get(j);
-                Enemy e = enemies.get(i);
+        if (avatars.size() != 0) {
+            for (int i = 0; i < bullets2.size(); i++) {
+                if (bullets2.get(i).circle.intersects(avatars.get(0).rectangle.getBoundsInParent())) {
+                    avatars.get(0).live--;
+                    if (avatars.get(0).live == 0) {
+                        avatars.remove(0);
+                        player1Dead = true;
+                    }
 
-                double c1 = b.pos.x - e.x;
-                double c2 = b.pos.y - e.y;
-                double distance = Math.sqrt(Math.pow(c1, 2) + Math.pow(c2, 2));
-                if (distance < 12.5) {
-                    bullets.remove(j);
-                    enemies.remove(i);
-                    return;
+                    bullets2.remove(i);
                 }
-
             }
         }
+
     }
 
     private void doKeyboardActions() {
@@ -295,7 +357,7 @@ public class GameController implements Initializable {
         }
         if (Spressed) {
             for (int i = 0; i < walls.size(); i++) {
-                if (walls.get(i).rectangle.intersects(avatars.get(0).pos.x + avatars.get(0).direction.x - 25, avatars.get(0).pos.y + avatars.get(0).direction.y - 25, 50, 50)) {
+                if (walls.get(i).rectangle.intersects(avatars.get(0).pos.x - avatars.get(0).direction.x - 30, avatars.get(0).pos.y - avatars.get(0).direction.y - 30, 50, 50)) {
                     stopFlag = true;
                 }
 
@@ -330,7 +392,7 @@ public class GameController implements Initializable {
         }
         if (DOWNpressed) {
             for (int i = 0; i < walls.size(); i++) {
-                if (walls.get(i).rectangle.intersects(avatarTwos.get(0).pos.x + avatarTwos.get(0).direction.x - 25, avatarTwos.get(0).pos.y + avatarTwos.get(0).direction.y - 25, 50, 50)) {
+                if (walls.get(i).rectangle.intersects(avatarTwos.get(0).pos.x - avatarTwos.get(0).direction.x - 30, avatarTwos.get(0).pos.y - avatarTwos.get(0).direction.y - 30, 50, 50)) {
                     stopFlag2 = true;
                 }
 
@@ -394,7 +456,15 @@ public class GameController implements Initializable {
             Bullet bullet = new Bullet(canvas,
                     new Vector(avatars.get(0).pos.x, avatars.get(0).pos.y),
                     new Vector(2 * avatars.get(0).direction.x, 2 * avatars.get(0).direction.y));
-            bullets.add(bullet);
+            if (avatars.get(0).ammo != 0) {
+                bullets1.add(bullet);
+                avatars.get(0).ammo--;
+            }
+
+        }
+        if (keyEvent.getCode() == KeyCode.R) {
+            avatars.get(0).ammo = 5;
+            soundRecharge();
         }
 
         //Tank 2
@@ -415,7 +485,179 @@ public class GameController implements Initializable {
             Bullet bullet = new Bullet(canvas,
                     new Vector(avatarTwos.get(0).pos.x, avatarTwos.get(0).pos.y),
                     new Vector(2 * avatarTwos.get(0).direction.x, 2 * avatarTwos.get(0).direction.y));
-            bullets.add(bullet);
+            if (avatarTwos.get(0).ammo != 0) {
+                bullets2.add(bullet);
+                avatarTwos.get(0).ammo--;
+            }
+        }
+        if (keyEvent.getCode() == KeyCode.SHIFT) {
+            avatarTwos.get(0).ammo = 5;
+            soundRecharge();
+        }
+    }
+
+    private void showLifePlayer1() {
+
+        if(avatars.size() != 0){
+            if (avatars.get(0).live == 5) {
+                String uri = "file:" + HelloApplication.class.getResource("fullLive.png").getPath();
+                Image live = new Image(uri);
+                liveImage.setImage(live);
+            }
+            if (avatars.get(0).live == 4) {
+                String uri = "file:" + HelloApplication.class.getResource("fourHearts.png").getPath();
+                Image live = new Image(uri);
+                liveImage.setImage(live);
+            }
+            if (avatars.get(0).live == 3) {
+                String uri = "file:" + HelloApplication.class.getResource("threeHearts.png").getPath();
+                Image live = new Image(uri);
+                liveImage.setImage(live);
+            }
+            if (avatars.get(0).live == 2) {
+                String uri = "file:" + HelloApplication.class.getResource("twoHearts.png").getPath();
+                Image live = new Image(uri);
+                liveImage.setImage(live);
+            }
+            if (avatars.get(0).live == 1) {
+                String uri = "file:" + HelloApplication.class.getResource("oneHeart.png").getPath();
+                Image live = new Image(uri);
+                liveImage.setImage(live);
+            }
+        }
+
+    }
+
+    private void showLifePlayer2() {
+
+        if(avatarTwos.size() != 0){
+            if (avatarTwos.get(0).live == 5) {
+                String uri = "file:" + HelloApplication.class.getResource("fullLive.png").getPath();
+                Image live = new Image(uri);
+                liveImage2.setImage(live);
+            }
+            if (avatarTwos.get(0).live == 4) {
+                String uri = "file:" + HelloApplication.class.getResource("fourHearts.png").getPath();
+                Image live = new Image(uri);
+                liveImage2.setImage(live);
+            }
+            if (avatarTwos.get(0).live == 3) {
+                String uri = "file:" + HelloApplication.class.getResource("threeHearts.png").getPath();
+                Image live = new Image(uri);
+                liveImage2.setImage(live);
+            }
+            if (avatarTwos.get(0).live == 2) {
+                String uri = "file:" + HelloApplication.class.getResource("twoHearts.png").getPath();
+                Image live = new Image(uri);
+                liveImage2.setImage(live);
+            }
+            if (avatarTwos.get(0).live == 1) {
+                String uri = "file:" + HelloApplication.class.getResource("oneHeart.png").getPath();
+                Image live = new Image(uri);
+                liveImage2.setImage(live);
+            }
+        }
+
+    }
+
+    private void showAmmoPlayer1() {
+
+        if(avatars.size() != 0){
+            if (avatars.get(0).ammo == 5) {
+                String uri = "file:" + HelloApplication.class.getResource("ammo.png").getPath();
+                Image live = new Image(uri);
+                bulletImage.setImage(live);
+            }
+            if (avatars.get(0).ammo == 4) {
+                String uri = "file:" + HelloApplication.class.getResource("fourBullets.png").getPath();
+                Image live = new Image(uri);
+                bulletImage.setImage(live);
+            }
+            if (avatars.get(0).ammo == 3) {
+                String uri = "file:" + HelloApplication.class.getResource("threeBullets.png").getPath();
+                Image live = new Image(uri);
+                bulletImage.setImage(live);
+            }
+            if (avatars.get(0).ammo == 2) {
+                String uri = "file:" + HelloApplication.class.getResource("twoBullets.png").getPath();
+                Image live = new Image(uri);
+                bulletImage.setImage(live);
+            }
+            if (avatars.get(0).ammo == 1) {
+                String uri = "file:" + HelloApplication.class.getResource("oneBullet.png").getPath();
+                Image live = new Image(uri);
+                bulletImage.setImage(live);
+            }
+
+            if(avatars.get(0).ammo == 0){
+                String uri = "file:" + HelloApplication.class.getResource("reloadIcon.png").getPath();
+                Image live = new Image(uri);
+                bulletImage.setImage(live);
+            }
+        }
+
+    }
+
+    private void showAmmoPlayer2() {
+
+        if(avatarTwos.size() != 0){
+            if (avatarTwos.get(0).ammo == 5) {
+                String uri = "file:" + HelloApplication.class.getResource("ammo.png").getPath();
+                Image live = new Image(uri);
+                bulletImage2.setImage(live);
+            }
+            if (avatarTwos.get(0).ammo == 4) {
+                String uri = "file:" + HelloApplication.class.getResource("fourBullets.png").getPath();
+                Image live = new Image(uri);
+                bulletImage2.setImage(live);
+            }
+            if (avatarTwos.get(0).ammo == 3) {
+                String uri = "file:" + HelloApplication.class.getResource("threeBullets.png").getPath();
+                Image live = new Image(uri);
+                bulletImage2.setImage(live);
+            }
+            if (avatarTwos.get(0).ammo == 2) {
+                String uri = "file:" + HelloApplication.class.getResource("twoBullets.png").getPath();
+                Image live = new Image(uri);
+                bulletImage2.setImage(live);
+            }
+            if (avatarTwos.get(0).ammo == 1) {
+                String uri = "file:" + HelloApplication.class.getResource("oneBullet.png").getPath();
+                Image live = new Image(uri);
+                bulletImage2.setImage(live);
+            }
+
+            if(avatarTwos.get(0).ammo == 0){
+                String uri = "file:" + HelloApplication.class.getResource("reloadIcon.png").getPath();
+                Image live = new Image(uri);
+                bulletImage2.setImage(live);
+            }
+        }
+
+
+    }
+
+    private void soundRecharge(){
+        String uri = HelloApplication.class.getResource("maxAmmo.wav").getPath();
+        File musicPath = new File(uri);
+
+        if(musicPath.exists()){
+
+            try {
+                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioInput);
+                clip.start();
+
+            } catch (UnsupportedAudioFileException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (LineUnavailableException e) {
+                throw new RuntimeException(e);
+            }
+        }else {
+            System.out.println("No existe");
         }
     }
 }

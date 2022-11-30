@@ -4,6 +4,7 @@ import com.example.integradora3apo.HelloApplication;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.shape.Rectangle;
 
 public class AvatarTwo {
 
@@ -12,7 +13,10 @@ public class AvatarTwo {
     private Image tank;
     public Vector pos;
     public Vector direction;
+    public Rectangle rectangle;
 
+    public int ammo = 5;
+    public int live = 5;
     public AvatarTwo(Canvas canvas){
         this.canvas = canvas;
         gc = canvas.getGraphicsContext2D();
@@ -27,6 +31,7 @@ public class AvatarTwo {
         gc.translate(pos.x, pos.y);
         gc.rotate(90+direction.getAngle());
         gc.drawImage(tank, -25,-25, 50,50);
+        rectangle = new Rectangle(pos.x-25,pos.y-25,40,40);
         gc.restore();
     }
     public void setPosition(double x, double y) {

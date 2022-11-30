@@ -1,6 +1,7 @@
 package com.example.integradora3apo.control;
 
 import com.example.integradora3apo.HelloApplication;
+import com.example.integradora3apo.model.AvatarData;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,14 +21,17 @@ public class HelloController implements Initializable {
     @FXML
     private Button startGame;
 
-    @FXML
-    private TextField textUsuario1;
+    private Clip clip;
 
     @FXML
-    private TextField textUsuario2;
+    public TextField textUsuario1;
+
+    @FXML
+    public TextField textUsuario2;
 
     @FXML
     void startGame(ActionEvent event) {
+
 
         if(textUsuario1.getText().equals("") || textUsuario2.getText().equals("")){
 
@@ -38,10 +42,12 @@ public class HelloController implements Initializable {
 
         }else{
 
+            AvatarData.getInstance().setNamesPlayer1(textUsuario1.getText());
+            AvatarData.getInstance().setNamesPlayer2(textUsuario2.getText());
             HelloApplication.showWindow("canvasView.fxml");
             Stage currentStage = (Stage) startGame.getScene().getWindow();
             currentStage.hide();
-
+            clip.close();
         }
 
     }
@@ -49,14 +55,14 @@ public class HelloController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        File musicPath = new File("C:\\Users\\pante\\OneDrive\\Escritorio\\Integradora3-APO2\\src\\main\\resources\\com\\example\\integradora3apo\\pou.wav");
+        String uri = HelloApplication.class.getResource("pou.wav").getPath();
+        System.out.println(uri);
+        File musicPath = new File(uri);
 
         if(musicPath.exists()){
 
             try {
-                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
-                Clip clip = AudioSystem.getClip();
+                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath); clip = AudioSystem.getClip();
                 clip.open(audioInput);
                 clip.start();
                 clip.loop(3);

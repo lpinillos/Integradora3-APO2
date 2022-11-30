@@ -29,7 +29,7 @@ public class Bullet {
     public void draw(){
 
         gc.drawImage(bullet, pos.x-5, pos.y-5, 40,40);
-        circle = new Circle(pos.x,pos.y,10);
+        circle = new Circle(pos.x-5,pos.y-5,10);
         pos.x += direction.x;
         pos.y += direction.y;
 
